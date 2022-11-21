@@ -33,6 +33,7 @@ class PostController extends AbstractController
         $serializerFactory = ContainerEmulator::getService(SerializerFactory::class);
         $serializer = $serializerFactory->create(FormatType::JSON);
         $postsBody = $serializer->serialize($posts);
+
         return $this->makeResponse($postsBody, StatusCode::HTTP_OK, ContentType::JSON_UTF);
     }
 }

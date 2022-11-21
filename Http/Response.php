@@ -33,9 +33,9 @@ class Response
     /**
      * @return string
      */
-    public function getCode(): string
+    public function getCode(): int
     {
-        return $this->code;
+        return (int)$this->code;
     }
 
     /**

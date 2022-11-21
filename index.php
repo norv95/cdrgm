@@ -14,6 +14,11 @@ spl_autoload_register(function($class) {
 });
 
 $request = \App\Http\RequestBuilder::build($_SERVER, $_POST);
+
+set_exception_handler(function (Throwable $exception) use ($request) {
+    ExceptionHandler::handleException($exception, $request);
+});
+
 $router = new \App\Router(controllers: (new \App\Service\FilesService())->getNamespaceClasses('App\Controller'));
 
 list($controllerClassName, $methodName) = $router->getRequestHandler($request);
@@ -21,5 +26,10 @@ if (!$controllerClassName || !$methodName) {
     throw new \App\Exception\RequestHandlerNotFoundException(message: "No controller found for the request");
 }
 $controller = new $controllerClassName();
-$controller->$methodName($request);
+/** @var \App\Http\Response $response */
+$response = $controller->$methodName($request);
+
+header('Content-type:' . $response->getContentType());
+http_response_code($response->getCode());
+echo $response->getBody();
 
