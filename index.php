@@ -13,7 +13,7 @@ spl_autoload_register(function($class) {
     require $class_path . ".php";
 });
 
-$request = \App\Http\RequestFactory::build($_SERVER, $_POST);
+$request = \App\Http\RequestBuilder::build($_SERVER, $_POST);
 $router = new \App\Router(controllers: (new \App\Service\FilesService())->getNamespaceClasses('App\Controller'));
 
 list($controllerClassName, $methodName) = $router->getRequestHandler($request);

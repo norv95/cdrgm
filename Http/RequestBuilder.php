@@ -2,7 +2,7 @@
 
 namespace App\Http;
 
-class RequestFactory
+class RequestBuilder
 {
     public static function build(array $serverInfo, $postInfo): Request
     {
