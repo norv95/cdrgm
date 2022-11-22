@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 //todo remove after the development is finished
-ini_set('display_errors', 'true');
-error_reporting(E_ALL);
+//ini_set('display_errors', 'true');
+//error_reporting(E_ALL);
 
 spl_autoload_register(function($class) {
     $rootNamespace = 'App\\';
