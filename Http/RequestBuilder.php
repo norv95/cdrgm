@@ -12,16 +12,26 @@ class RequestBuilder
         $params = explode(';', filter_var($serverInfo['QUERY_STRING'],FILTER_SANITIZE_SPECIAL_CHARS));
         $queryParams = [];
         foreach ($params as $param) {
+            if (empty($param)) {
+                continue;
+            }
             list($key, $value) = explode('=', $param);
-            $queryParams[$key] = $value;
-        }
-
-        $body = [];
-        foreach ($postInfo as $key => $value) {
-            $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            if (!empty($key)) {
+                $queryParams[$key] = $value;
+            }
         }
 
         $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+
+        $body = [];
+        if ($contentType == ContentType::FORM_ENCODED) {
+            foreach ($postInfo as $key => $value) {
+                $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        }
+        if ($contentType == ContentType::JSON) {
+            $body = json_decode(file_get_contents('php://input'),true);
+        }
 
         return new Request($method, $url, $queryParams, $body, $contentType);
     }

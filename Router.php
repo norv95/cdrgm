@@ -24,13 +24,14 @@ class Router
     public function getRequestHandler(Request $request)
     {
         $searchPath = $request->getUrl();
+        $searchPath = preg_replace('/\/[0-9]+($|\/)/', '/{id}', $searchPath);
 
         foreach ($this->routes as $route) {
             if (!in_array($request->getMethod(), $route['methods'])) {
                 continue;
             }
 
-            if (str_contains($route['path'], $searchPath)) {
+            if (strcmp($route['path'], $searchPath) == 0) {
                 return [$route['controller'], $route['method']];
             }
         }

@@ -29,11 +29,82 @@ class PostController extends AbstractController
         $postsService = ContainerEmulator::getService(PostService::class);
         $posts = $postsService->getPosts($request->getQueryParams());
 
-        /** @var SerializerFactory $serializerFactory */
-        $serializerFactory = ContainerEmulator::getService(SerializerFactory::class);
-        $serializer = $serializerFactory->create(FormatType::JSON);
-        $postsBody = $serializer->serialize($posts);
+        $serializer = (ContainerEmulator::getService(SerializerFactory::class))->create(FormatType::JSON);
 
-        return $this->makeResponse($postsBody, StatusCode::HTTP_OK, ContentType::JSON_UTF);
+        return $this->makeResponse($posts, StatusCode::HTTP_OK, ContentType::JSON_UTF, $serializer);
+    }
+
+    /**
+     * Getting list of posts
+     * @param Request $request
+     * @return Response
+     * @throws \App\Exception\ServiceNotFoundException
+     */
+    #[Route('{id}', ['GET'])]
+    public function getPost(Request $request)
+    {
+        $postsService = ContainerEmulator::getService(PostService::class);
+        $urlParams = $request->getUrlParams();
+
+        $post = $postsService->getPost($urlParams[0]);
+
+        $serializer = (ContainerEmulator::getService(SerializerFactory::class))->create(FormatType::JSON);
+
+        return $this->makeResponse($post, StatusCode::HTTP_OK, ContentType::JSON_UTF, $serializer);
+    }
+
+    /**
+     * Create post entity
+     * @param Request $request
+     * @return Response
+     * @throws \App\Exception\ServiceNotFoundException
+     */
+    #[Route('', ['POST'])]
+    public function createPost(Request $request)
+    {
+        $postsService = ContainerEmulator::getService(PostService::class);
+        $post = $postsService->createPost($request->getBody());
+
+        $serializer = (ContainerEmulator::getService(SerializerFactory::class))->create(FormatType::JSON);
+
+        return $this->makeResponse($post, StatusCode::HTTP_CREATED, ContentType::JSON_UTF, $serializer);
+    }
+
+    /**
+     * Update post entity
+     * @param Request $request
+     * @return Response
+     * @throws \App\Exception\ServiceNotFoundException
+     */
+    #[Route('{id}', ['PUT','PATCH'])]
+    public function updatePost(Request $request)
+    {
+        /** @var PostService $postsService */
+        $postsService = ContainerEmulator::getService(PostService::class);
+        $urlParams = $request->getUrlParams();
+        $post = $postsService->updatePost($urlParams[0], $request->getBody());
+
+        $serializer = (ContainerEmulator::getService(SerializerFactory::class))->create(FormatType::JSON);
+
+        return $this->makeResponse($post, StatusCode::HTTP_OK, ContentType::JSON_UTF, $serializer);
+    }
+
+    /**
+     * Delete post entity
+     * @param Request $request
+     * @return Response
+     * @throws \App\Exception\ServiceNotFoundException
+     */
+    #[Route('{id}', ['DELETE'])]
+    public function deletePost(Request $request)
+    {
+        /** @var PostService $postsService */
+        $postsService = ContainerEmulator::getService(PostService::class);
+        $urlParams = $request->getUrlParams();
+        $post = $postsService->deletePost($urlParams[0]);
+
+        $serializer = (ContainerEmulator::getService(SerializerFactory::class))->create(FormatType::JSON);
+
+        return $this->makeResponse($post, StatusCode::HTTP_OK, ContentType::JSON_UTF, $serializer);
     }
 }

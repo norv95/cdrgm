@@ -48,11 +48,28 @@ class Request
 
     public function getBody()
     {
-        if ($this->method !== 'POST') {
+        if (!in_array($this->method, ['POST','PUT','PATCH'])) {
             return '';
         }
 
         return $this->body;
     }
 
+    public function getFilteredQueryParams(array $filteredParams)
+    {
+        $params = [];
+        foreach ($filteredParams as $key => $param) {
+            $params[$key] = $this->queryParams[$key] ?? $param;
+        }
+
+        return $params;
+    }
+
+    public function getUrlParams()
+    {
+        $matches = [];
+        preg_match('/(?<=\/)[0-9]+($|(?=\/))/', $this->getUrl(), $matches);
+
+        return $matches;
+    }
 }

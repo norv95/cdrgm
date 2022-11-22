@@ -2,6 +2,6 @@
 
 namespace App\Exception;
 
-class RequestHandlerNotFoundException extends \Exception
+class RequestHandlerNotFoundException extends PublicException
 {
 }

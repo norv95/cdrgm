@@ -14,11 +14,16 @@ class JsonSerializer extends AbstractSerializer implements SerializerDeserialize
      */
     public function serialize(array|object $item): mixed
     {
-        $data = is_array($item)
-            ? array_map(fn($itemObject) => $this->ObjectToArray($itemObject), $item)
-            : $this->ObjectToArray($item);
+        if (is_array($item)) {
+            $data = $this->convertArrayObjects($item);
+        }
+
+        if (is_object($item)) {
+            $data = $this->ObjectToArray($item);
+        }
 
         $serializedData = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+
         if (!$serializedData) {
             throw new SerializationException(
                 'Cannot serialize to JSON format the following object' . print_r($data, true)
@@ -37,7 +42,7 @@ class JsonSerializer extends AbstractSerializer implements SerializerDeserialize
     {
         $items = json_decode($data, true);
 
-        if (!is_array($items)) {
+        if (!isset($items[0])) {
             $items = [$items];
         }
 
@@ -48,6 +53,7 @@ class JsonSerializer extends AbstractSerializer implements SerializerDeserialize
         foreach ($items as $item) {
             $object = new $className();
             $this->setObjectProperties($object, $item);
+
             $deserialized[] = $object;
         }
 

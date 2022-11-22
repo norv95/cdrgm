@@ -10,4 +10,6 @@ Interface ContentType
     const PDF             = 'application/pdf';
     const TXT             = 'text/plain';
     const XML             = 'application/xml';
+    const FORM_ENCODED    = 'application/x-www-form-urlencoded';
+
 }
