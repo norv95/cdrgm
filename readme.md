@@ -8,6 +8,7 @@ for GET, POST, PUT, DELETE requests
  3. "Google Analytics Items" showing the implementation with analytical request using JSON mock data
 
 Routes
+
 - "Posts" have several routes for CRUD operations:
 - GET http://[domain:port]/posts - get list of all posts  
 - GET http://[domain:port]/posts/{id} - get a specific post
@@ -24,6 +25,7 @@ Routes
 
 
 Processing the request
+
 1. When request comes to the implemented API, first step is to register functions to handle errors,
    exceptions and unexpected shutdown to send a correct response from API.
 2. Next step is to initialize available routes which are implemented with using class and method attributes
@@ -36,6 +38,7 @@ Processing the request
 8. The Controller serializes obtained data to the request format
 
 Notices
+
 Since composer is not used there is a need to implement autoloading functions with spl_autoload_register function
 The correct way of working with services is to use Dependency Injection technique. 
 To make implementation concise there was used ContainerEmulator to get services.
