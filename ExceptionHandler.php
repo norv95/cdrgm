@@ -72,10 +72,10 @@ class ExceptionHandler
      * @throws ErrorException
      */
     public static function handleFatalError(
-        Error $error,
+        array $error,
         Request $request): void
     {
-        throw new ErrorException($error->getMessage(),$error->getCode(), 1, $error->getFile(), $error->getLine());
+        throw new ErrorException($error['message'], $error['type'], 1, $error['file'], $error['line']);
     }
 
     /**

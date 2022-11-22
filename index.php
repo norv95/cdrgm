@@ -15,6 +15,17 @@ spl_autoload_register(function($class) {
 
 $request = \App\Http\RequestBuilder::build($_SERVER, $_POST);
 
+register_shutdown_function(function () use ($request) {
+    $error = error_get_last();
+    if ($error) {
+        ExceptionHandler::handleFatalError($error, $request);
+    }
+});
+
+set_error_handler(function ($errorCode, $errorMessage, $errorFile, $errorLine) use ($request) {
+    ExceptionHandler::handleError($errorCode, $errorMessage, $errorFile, $errorLine, $request);
+});
+
 set_exception_handler(function (Throwable $exception) use ($request) {
     ExceptionHandler::handleException($exception, $request);
 });
@@ -23,8 +34,13 @@ $router = new \App\Router(controllers: (new \App\Service\FilesService())->getNam
 
 list($controllerClassName, $methodName) = $router->getRequestHandler($request);
 if (!$controllerClassName || !$methodName) {
-    throw new \App\Exception\RequestHandlerNotFoundException(message: "No controller found for the request");
+    throw new \App\Exception\RequestHandlerNotFoundException(
+        message: "No resource found for the request",
+        publicMessage: "No resource found for the request",
+        statusCode: 404
+    );
 }
+
 $controller = new $controllerClassName();
 /** @var \App\Http\Response $response */
 $response = $controller->$methodName($request);
